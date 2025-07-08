@@ -12,15 +12,16 @@ st.title("양주2동 나이대별 인구 변화 추이")
 def load_data():
     df = pd.read_csv("population.csv", encoding="utf-8")
     df = df.rename(columns={"Unnamed: 0": "연도"})
-    
-    # 쉼표 제거하고 숫자로 변환
+
+    # 쉼표 제거 및 숫자 변환 (문자열인 경우만)
     for col in df.columns[1:]:
-        df[col] = df[col].str.replace(",", "").astype(int)
+        df[col] = df[col].apply(lambda x: int(str(x).replace(",", "")) if pd.notna(x) else 0)
 
     # wide → long 변환
     df_long = df.melt(id_vars=["연도"], var_name="나이대", value_name="인구수")
     df_long["연도"] = df_long["연도"].astype(int)
     return df_long
+
 
 df = load_data()
 
