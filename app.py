@@ -1,20 +1,17 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 
-# 한글 폰트 설정 (matplotlib)
+# ✅ 한글 폰트 지정 (예: 맑은 고딕)
 plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
 
-# 제목
 st.title("양주2동 나이대별 인구 변화 추이")
 
-# CSV 데이터 로드
 @st.cache_data
 def load_data():
     df = pd.read_csv("population.csv", encoding="utf-8")
-
-    # 데이터 전처리
     data_rows = df.iloc[::2].reset_index(drop=True)
     header_rows = df.iloc[1::2].reset_index(drop=True)
     data_rows.columns = header_rows.iloc[0].values
@@ -33,15 +30,15 @@ def load_data():
 
 df = load_data()
 
-# 나이대 선택
+# 사용자 나이대 선택
 age_groups = df["나이대"].unique().tolist()
-selected_ages = st.multiselect("보고 싶은 나이대를 선택하세요", age_groups, default=["0~4?", "5~9?"])
+selected_ages = st.multiselect("보고 싶은 나이대를 선택하세요", age_groups, default=["0~4?"])
 
 # 필터링
 filtered_df = df[df["나이대"].isin(selected_ages)]
 
-# 그래프 그리기
-fig, ax = plt.subplots()
+# ✅ 그래프
+fig, ax = plt.subplots(figsize=(8, 5))
 for age in selected_ages:
     group = filtered_df[filtered_df["나이대"] == age]
     ax.plot(group["연도"], group["인구수"], marker='o', label=age)
@@ -50,4 +47,6 @@ ax.set_xlabel("연도")
 ax.set_ylabel("인구 수")
 ax.set_title("양주2동 나이대별 인구 변화")
 ax.legend()
+ax.set_xticks(sorted(filtered_df["연도"].unique()))  # ✅ 연도를 일정 간격으로 정렬
+
 st.pyplot(fig)
