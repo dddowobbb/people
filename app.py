@@ -12,7 +12,7 @@ st.title("양주2동 나이대별 인구 변화 추이")
 # CSV 데이터 로드
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data/population.csv", encoding="utf-8")
+    df = pd.read_csv("population.csv", encoding="utf-8")
 
     # 데이터 전처리
     data_rows = df.iloc[::2].reset_index(drop=True)
